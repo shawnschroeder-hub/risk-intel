@@ -1,0 +1,347 @@
+﻿<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Risk Intelligence â€” Dashboard</title>
+<style>
+:root{
+  --bg:#F2F4F5; --surface:#FFFFFF; --ink:#16232E; --muted:#54646F; --faint:#8595A0;
+  --line:#D9E0E4; --accent:#0E6663; --accent-ink:#0B4E4C; --accent-soft:#E3EFEE;
+  --warn-bg:#F7EDD8; --warn-ink:#7A5410; --warn-line:#E3CD9E;
+  --tile:#FFFFFF; --hover:#F0F5F4;
+}
+@media (prefers-color-scheme: dark){:root{
+  --bg:#0F1519; --surface:#171F25; --ink:#E7EDF1; --muted:#9DACB6; --faint:#6E7E89;
+  --line:#26323A; --accent:#48A7A0; --accent-ink:#7CC7C1; --accent-soft:#12322F;
+  --warn-bg:#2E2510; --warn-ink:#E0BC6B; --warn-line:#54431C;
+  --tile:#171F25; --hover:#1C2830;
+}}
+:root[data-theme="light"]{
+  --bg:#F2F4F5; --surface:#FFFFFF; --ink:#16232E; --muted:#54646F; --faint:#8595A0;
+  --line:#D9E0E4; --accent:#0E6663; --accent-ink:#0B4E4C; --accent-soft:#E3EFEE;
+  --warn-bg:#F7EDD8; --warn-ink:#7A5410; --warn-line:#E3CD9E;
+  --tile:#FFFFFF; --hover:#F0F5F4;
+}
+:root[data-theme="dark"]{
+  --bg:#0F1519; --surface:#171F25; --ink:#E7EDF1; --muted:#9DACB6; --faint:#6E7E89;
+  --line:#26323A; --accent:#48A7A0; --accent-ink:#7CC7C1; --accent-soft:#12322F;
+  --warn-bg:#2E2510; --warn-ink:#E0BC6B; --warn-line:#54431C;
+  --tile:#171F25; --hover:#1C2830;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font:15px/1.5 "Segoe UI",-apple-system,"Helvetica Neue",Arial,sans-serif;}
+a{color:inherit}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px 48px}
+.switch{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--surface);
+  border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin:14px 0 4px}
+.switch .q{font-size:13px;color:var(--muted);margin-right:2px}
+.switch a{font-size:13px;font-weight:650;text-decoration:none;border:1px solid var(--line);
+  border-radius:99px;padding:6px 16px;color:var(--ink)}
+.switch a:hover{border-color:var(--accent);color:var(--accent-ink)}
+.switch a.here{background:var(--accent);border-color:var(--accent);color:#fff;pointer-events:none}
+@media (prefers-color-scheme: dark){.switch a.here{color:#08211F}}
+:root[data-theme="dark"] .switch a.here{color:#08211F}
+:root[data-theme="light"] .switch a.here{color:#fff}
+.topbar{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px 18px;
+  padding:16px 0 14px;border-bottom:2px solid var(--ink);}
+.mast{font-size:19px;font-weight:700;letter-spacing:.4px}
+.mast b{color:var(--accent);font-weight:700}
+.stamp{font:12px/1.4 Consolas,Menlo,monospace;color:var(--muted)}
+.sample{margin-left:auto;font-size:11px;font-weight:600;letter-spacing:.8px;
+  text-transform:uppercase;color:var(--warn-ink);background:var(--warn-bg);
+  border:1px solid var(--warn-line);padding:3px 9px;border-radius:3px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+  gap:12px;margin:18px 0}
+.kpi{background:var(--tile);border:1px solid var(--line);border-radius:6px;padding:12px 14px 10px}
+.kpi .lab{font-size:10.5px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}
+.kpi .val{font:26px/1.15 Consolas,Menlo,monospace;font-variant-numeric:tabular-nums;
+  font-weight:700;margin-top:4px}
+.kpi .ctx{font-size:12px;color:var(--muted);margin-top:2px}
+.kpi.hot .val{color:var(--accent-ink)}
+.cols{display:grid;grid-template-columns:1fr 300px;gap:16px;align-items:start}
+@media (max-width:900px){.cols{grid-template-columns:1fr}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:6px;margin-bottom:16px;overflow:hidden}
+.phead{display:flex;align-items:baseline;gap:10px;padding:11px 16px;border-bottom:1px solid var(--line)}
+.phead h2{margin:0;font-size:12.5px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase}
+.phead .n{font:12px/1 Consolas,monospace;color:var(--accent-ink);font-weight:700}
+.story{display:block;padding:12px 16px;border-bottom:1px solid var(--line);text-decoration:none;
+  transition:background .12s}
+.story:last-child{border-bottom:none}
+.story:hover,.story:focus-visible{background:var(--hover)}
+.story:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.story h3{margin:0 0 3px;font-size:15px;line-height:1.35;font-weight:650;text-wrap:balance}
+.story:hover h3{color:var(--accent-ink)}
+.meta{font-size:12px;color:var(--muted)}
+.meta .src{font-weight:600}
+.note{font-size:13px;color:var(--muted);margin-top:4px}
+.note b{color:var(--ink);font-weight:600}
+.chip{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;
+  padding:2px 7px;border-radius:3px;margin-left:8px;vertical-align:1px;
+  background:var(--warn-bg);color:var(--warn-ink);border:1px solid var(--warn-line)}
+.rail .panel{margin-bottom:14px}
+.rail h2{font-size:12px}
+.bars{padding:12px 16px 14px;display:grid;gap:9px}
+.bar-row{display:grid;grid-template-columns:110px 1fr 22px;gap:8px;align-items:center;font-size:12.5px}
+.bar-row .t{color:var(--muted)}
+.bar{height:10px;border-radius:3px;background:var(--accent-soft);position:relative;overflow:hidden}
+.bar i{position:absolute;inset:0;right:auto;background:var(--accent);border-radius:3px}
+.bar-row .v{font:12px/1 Consolas,monospace;text-align:right;color:var(--ink)}
+.topics{padding:12px 16px 14px;display:flex;flex-wrap:wrap;gap:7px}
+.topic{font-size:12px;font-weight:600;border:1px solid var(--line);border-radius:99px;
+  padding:4px 11px;cursor:pointer;background:var(--tile);color:var(--ink)}
+.topic:hover{border-color:var(--accent)}
+.topic[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+@media (prefers-color-scheme: dark){.topic[aria-pressed="true"]{color:#08211F}}
+:root[data-theme="dark"] .topic[aria-pressed="true"]{color:#08211F}
+:root[data-theme="light"] .topic[aria-pressed="true"]{color:#fff}
+.topic .c{font:11px/1 Consolas,monospace;opacity:.75;margin-left:4px}
+.dim{opacity:.28;transition:opacity .15s}
+.pw{padding:12px 16px 14px;display:grid;gap:10px}
+.pw a{display:block;font-size:13px;font-weight:600;text-decoration:none;color:var(--ink)}
+.pw a:hover{color:var(--accent-ink)}
+.pw .m{font-size:12px;color:var(--muted);font-weight:400;margin-top:1px}
+.srcs{padding:12px 16px 14px;font-size:12.5px;color:var(--muted);line-height:1.8}
+.srcs b{color:var(--ink)}
+.foot{margin-top:6px;font-size:12px;color:var(--faint);line-height:1.6}
+@media (prefers-reduced-motion: reduce){.story,.dim,.topic{transition:none}}
+</style>
+
+<div class="wrap">
+  <div class="switch" id="top">
+    <span class="q">Two formats, same daily intelligence â€” click to compare:</span>
+    <a class="here" href="#top" aria-current="page">ðŸ“Š Dashboard (viewing)</a>
+    <a id="xlink" href="https://shawnschroeder-hub.github.io/risk-intel/newsletter.html">ðŸ“° Newsletter briefing â†’</a>
+  </div>
+
+  <div class="topbar">
+    <span class="mast">RISK<b>DESK</b> â€” Daily Intelligence</span>
+    <span class="stamp">FRI 2026-07-31 Â· 08:45 CT Â· TODAY FIRST + LOOKBACK Â· 12-SOURCE ROSTER</span>
+    <span class="sample">Format sample</span>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi"><div class="lab">Stories</div><div class="val">25</div><div class="ctx">today first Â· kept-critical lookback</div></div>
+    <div class="kpi hot"><div class="lab">Verdict watch</div><div class="val">$604M</div><div class="ctx">C.H. Robinson, Dallas County</div></div>
+    <div class="kpi hot"><div class="lab">Property rates, Q2</div><div class="val">âˆ’12%</div><div class="ctx">global index; all lines âˆ’6%</div></div>
+    <div class="kpi"><div class="lab">Mfg share of cyber</div><div class="val">27.7%</div><div class="ctx">most-attacked industry, 5th yr</div></div>
+    <div class="kpi"><div class="lab">H1 cat losses</div><div class="val">$112B</div><div class="ctx">only $44B insured</div></div>
+  </div>
+
+  <div class="cols">
+    <main>
+      <section class="panel">
+        <div class="phead"><h2>Top Stories</h2><span class="n">7</span></div>
+        <a class="story" data-tags="cat" target="_blank" rel="noopener" href="https://riskandinsurance.com/global-disaster-losses-dip-below-average-as-venezuela-quake-and-heatwaves-signal-rising-risk/">
+          <h3>Global disaster losses dip below average as Venezuela quake and heatwaves signal rising risk</h3>
+          <div class="meta"><span class="src">Risk &amp; Insurance</span> Â· Jul 31</div>
+          <div class="note">H1 2026: ~$112B economic losses, only $44B insured. <b>Why it matters:</b> a significant protection gap heading into peak hurricane season.</div>
+        </a>
+        <a class="story" data-tags="market" target="_blank" rel="noopener" href="https://beinsure.com/global-insurance-rates-fall-as-property-prices-drop/">
+          <h3>Q2 Global Insurance Market Index: rates fall 6%, property drops 12%</h3>
+          <div class="meta"><span class="src">Beinsure</span> Â· Q2 index</div>
+          <div class="note">Increased capital, cheaper reinsurance, and competition are favoring buyers. <b>Why it matters:</b> hard numbers behind the soft market â€” leverage for your renewal.</div>
+        </a>
+        <a class="story" data-tags="cat" target="_blank" rel="noopener" href="https://www.insurancebusinessmag.com/us/news/catastrophe/super-el-nino-will-redraw-global-catastrophe-risk-584352.aspx">
+          <h3>Super El NiÃ±o will redraw global catastrophe risk</h3>
+          <div class="meta"><span class="src">Insurance Business America</span> Â· Jul 31</div>
+          <div class="note">Atlantic hurricane threat eases while Pacific, wildfire, and flood exposures climb. <b>Why it matters:</b> the cat-risk map your property program is priced on is moving.</div>
+        </a>
+        <a class="story" data-tags="market manufacturing" target="_blank" rel="noopener" href="https://www.insurancebusinessmag.com/us/news/property/most-commercial-property-accounts-arrive-with-a-valuation-gap-584546.aspx">
+          <h3>Most commercial property accounts arrive with a valuation gap</h3>
+          <div class="meta"><span class="src">Insurance Business America</span> Â· Jul 31</div>
+          <div class="note">Underinsured schedules risk coinsurance penalties at claim time. <b>Why it matters:</b> a quiet check worth running on plant and equipment values.</div>
+        </a>
+        <a class="story" data-tags="cat manufacturing" target="_blank" rel="noopener" href="https://www.artemis.bm/news/us-midwest-scs-wind-hail-tornadoes-may-rank-as-a-top-10-severe-weather-loss-aon/">
+          <h3>US Midwest severe storms, wind, hail &amp; tornadoes may rank as a top-10 severe weather loss</h3>
+          <div class="meta"><span class="src">Artemis / Aon</span> Â· Jul 31</div>
+          <div class="note">Aon says the event could rank among the costliest on record. <b>Why it matters:</b> direct watch item for Midwest plants and property programs.</div>
+        </a>
+        <a class="story" data-tags="market" target="_blank" rel="noopener" href="https://riskandinsurance.com/pc-market-enters-correction-phase-with-significant-rate-relief-and-emerging-challenges/">
+          <h3>P&amp;C market enters correction phase with significant rate relief and emerging challenges</h3>
+          <div class="meta"><span class="src">Risk &amp; Insurance</span> Â· 2026</div>
+          <div class="note">General &amp; product liability tentatively stabilizing in manufacturing segments. <b>Why it matters:</b> timing looks favorable to push on rate.</div>
+        </a>
+        <a class="story" data-tags="market" target="_blank" rel="noopener" href="https://www.artemis.bm/news/100bn-event-may-not-be-enough-to-cause-a-hard-market-say-berenberg-analysts/">
+          <h3>$100bn event may not be enough to cause a hard market, say Berenberg analysts</h3>
+          <div class="meta"><span class="src">Artemis</span> Â· Jul 31</div>
+          <div class="note">Even a $100B catastrophe may not turn the softening market. <b>Why it matters:</b> buyer leverage should persist into the next renewal cycle.</div>
+        </a>
+      </section>
+
+      <section class="panel">
+        <div class="phead"><h2>Nuclear Verdicts &amp; Litigation Funding</h2><span class="n">6</span></div>
+        <a class="story" data-tags="verdicts" target="_blank" rel="noopener" href="https://www.trucknews.com/transportation/c-h-robinson-hit-with-604-million-nuclear-verdict/1003218910/">
+          <h3>C.H. Robinson hit with $604 million nuclear verdict</h3>
+          <div class="meta"><span class="src">Truck News</span> Â· late Jul</div>
+          <div class="note">Dallas County jury, fatal multi-vehicle crash â€” among the largest freight-transport verdicts ever. <b>Why it matters:</b> severity marker for any fleet/auto and umbrella program.</div>
+        </a>
+        <a class="story" data-tags="verdicts" target="_blank" rel="noopener" href="https://www.enlyte.com/media/69176">
+          <h3>The largest nuclear verdicts of Q2 2026: social inflation continues</h3>
+          <div class="meta"><span class="src">Enlyte</span> Â· Q2 roundup</div>
+          <div class="note">Enlyte's roundup of the quarter's largest verdicts; for scale, 2025 closed at 149 nuclear verdicts / $25.1B (Litigation Sentinel). <b>Why it matters:</b> the severity trendline your casualty pricing rides on.</div>
+        </a>
+        <a class="story" data-tags="litfunding" target="_blank" rel="noopener" href="https://www.insurancebusinessmag.com/us/news/breaking-news/insurers-hail-firstinthenation-ban-against-litigation-funding-580313.aspx">
+          <h3>Insurers hail first-in-the-nation ban against litigation funding</h3>
+          <div class="meta"><span class="src">Insurance Business America</span></div>
+          <div class="note">North Carolina's Prohibit Litigation Investments Act restricts outcome-tied third-party investment. <b>Why it matters:</b> the first state ban of its kind â€” a template others may copy.</div>
+        </a>
+        <a class="story" data-tags="litfunding" target="_blank" rel="noopener" href="https://blog.pia.org/2026/07/16/weekly-dispatch-july-16-2026/">
+          <h3>State roundup: NJ Assembly passes funding-transparency bill; NH bill targets foreign funders</h3>
+          <div class="meta"><span class="src">PIA Northeast blog</span> Â· Jul 2026</div>
+          <div class="note">NJ's A-2159 (Assembly-passed, not yet law) would build a disclosure framework; NH's introduced HB1384 would bar funding from foreign adversaries. <b>Why it matters:</b> disclosure momentum is building state by state.</div>
+        </a>
+        <a class="story" data-tags="litfunding" target="_blank" rel="noopener" href="https://www.insurancebusinessmag.com/us/news/breaking-news/2026-marks-turning-point-in-war-against-litigation-financing-csaa-legal-chief-564860.aspx">
+          <h3>2026 marks a "turning point" in the war against litigation financing</h3>
+          <div class="meta"><span class="src">Insurance Business America</span> Â· 2026 Â· still relevant</div>
+          <div class="note">CSAA's legal chief sees the tide turning as states move on bans and transparency. <b>Why it matters:</b> the legal environment driving casualty severity may finally be shifting.</div>
+        </a>
+        <a class="story" data-tags="litfunding" target="_blank" rel="noopener" href="https://www.insurancejournal.com/news/national/2026/03/24/863234.htm">
+          <h3>Groups push for federal court rule to disclose litigation funding</h3>
+          <div class="meta"><span class="src">Insurance Journal</span> Â· Mar 24 Â· older but critical</div>
+          <div class="note">A coalition wants federal courts to require disclosure of funders' identity and stake. <b>Why it matters:</b> federal disclosure would expose the money behind big-ticket suits nationwide.</div>
+        </a>
+      </section>
+
+      <section class="panel">
+        <div class="phead"><h2>Parametric &amp; Alternative Risk</h2><span class="n">2</span></div>
+        <a class="story" data-tags="parametric" target="_blank" rel="noopener" href="https://www.artemis.bm/news/munich-re-specialty-launches-parametric-earthquake-insurance-corporates-in-japan/">
+          <h3>Munich Re Specialty launches parametric earthquake insurance for corporates in Japan</h3>
+          <div class="meta"><span class="src">Artemis</span> Â· Jul 28</div>
+          <div class="note">Seismic-trigger cover, faster payouts. <b>Why it matters:</b> parametric is mainstreaming â€” worth asking brokers whether similar triggers could backstop business interruption.</div>
+        </a>
+        <a class="story" data-tags="parametric" target="_blank" rel="noopener" href="https://www.insurancejournal.com/magazines/mag-features/2026/07/27/878818.htm">
+          <h3>Two for one: when physics and finance intersect</h3>
+          <div class="meta"><span class="src">Insurance Journal</span> Â· Jul 27</div>
+          <div class="note">The parametric/indemnity line is fading as specialty (non-admitted) carriers blend both. <b>Why it matters:</b> one-stop structures worth raising with your broker.</div>
+        </a>
+      </section>
+
+      <section class="panel">
+        <div class="phead"><h2>Manufacturing &amp; Workplace</h2><span class="n">7</span></div>
+        <a class="story" data-tags="cyber manufacturing" target="_blank" rel="noopener" href="https://www.acoinsurance.com/post/2026-commercial-insurance-market-outlook">
+          <h3>Manufacturing was the most cyberattacked industry for the 5th straight year</h3>
+          <div class="meta"><span class="src">ACO Insurance 2026 Market Outlook, citing IBM X-Force</span></div>
+          <div class="note">27.7% of all incidents in 2025 hit manufacturers. <b>Why it matters:</b> the argument for your cyber tower size, written by the attackers.</div>
+        </a>
+        <a class="story" data-tags="manufacturing" target="_blank" rel="noopener" href="https://www.insurancejournal.com/news/national/2026/07/31/879848.htm">
+          <h3>NHTSA probes 1.2 million Tesla vehicles over suspension failure risks</h3>
+          <div class="meta"><span class="src">Insurance Journal</span> Â· Jul 31</div>
+          <div class="note">A preliminary investigation into suspension safety concerns. <b>Why it matters:</b> a live case study in product-liability and recall exposure at manufacturing scale.</div>
+        </a>
+        <a class="story" data-tags="cyber" target="_blank" rel="noopener" href="https://www.insurancejournal.com/news/national/2026/07/31/879686.htm">
+          <h3>Cyber firm Wiz says flaw could have exposed thousands of Microsoft cloud customers</h3>
+          <div class="meta"><span class="src">Insurance Journal</span> Â· Jul 31</div>
+          <div class="note">A single cloud vulnerability with mass blast radius. <b>Why it matters:</b> systemic cyber accumulation â€” the scenario your cyber policy's dependent-business-interruption wording exists for.</div>
+        </a>
+        <a class="story" data-tags="cyber" target="_blank" rel="noopener" href="https://www.insurancebusinessmag.com/us/news/cyber/ransomwares-new-ai-tactic-could-inflate-cyber-claims-584536.aspx">
+          <h3>Ransomware's new AI tactic could inflate cyber claims</h3>
+          <div class="meta"><span class="src">Insurance Business America</span> Â· Jul 31</div>
+          <div class="note">Attackers use AI pressure tactics to push victims into costly decisions. <b>Why it matters:</b> a tactic aimed at inflating claim severity, not just frequency.</div>
+        </a>
+        <a class="story" data-tags="workerscomp manufacturing" target="_blank" rel="noopener" href="https://riskandinsurance.com/uncovered-medical-services-are-driving-up-workers-comp-costs-wcri-finds/">
+          <h3>Uncovered medical services are driving up workers' comp costs, WCRI finds</h3>
+          <div class="meta"><span class="src">Risk &amp; Insurance</span> Â· Jul 31</div>
+          <div class="note">DME and services without fee schedules are eating a growing share of comp payments. <b>Why it matters:</b> a cost driver to raise with your TPA.</div>
+        </a>
+        <a class="story" data-tags="manufacturing" target="_blank" rel="noopener" href="https://www.rmmagazine.com/articles/article/2026/07/22/how-the-war-in-iran-impacts-legal-contracts">
+          <h3>How the war in Iran impacts legal contracts</h3>
+          <div class="meta"><span class="src">Risk Management Magazine</span> Â· Jul 22 Â· still relevant</div>
+          <div class="note">Armed conflict doesn't automatically excuse performance. <b>Why it matters:</b> a prompt to re-read force majeure language in supplier agreements.</div>
+        </a>
+        <a class="story" data-tags="manufacturing" target="_blank" rel="noopener" href="https://www.rmmagazine.com/articles/article/2026/07/14/defining-the-discoverability-and-privilege-of-ai-generated-materials">
+          <h3>Defining the discoverability and privilege of AI-generated materials</h3>
+          <div class="meta"><span class="src">Risk Management Magazine</span> Â· Jul 14 Â· still relevant</div>
+          <div class="note">Courts are clarifying when AI-generated materials are discoverable. <b>Why it matters:</b> governance flag as AI tools spread through the business.</div>
+        </a>
+      </section>
+
+      <section class="panel">
+        <div class="phead"><h2>London Market &amp; Global</h2><span class="n">3</span></div>
+        <a class="story" data-tags="cat" target="_blank" rel="noopener" href="http://www.cirmagazine.com/cir/c2026073103.php">
+          <h3>European wildfires threaten broader economic losses</h3>
+          <div class="meta"><span class="src">CIR / Guy Carpenter</span> Â· Jul 31</div>
+          <div class="note">Insured property losses stay modest, but wider economic impacts are expanding. <b>Why it matters:</b> supply-chain and contingent-BI exposure beyond the insured headline.</div>
+        </a>
+        <a class="story" data-tags="market" target="_blank" rel="noopener" href="https://www.lloyds.com/insights/media-centre/news/lloyds-finds-former-ceo-breached-compliance-rules">
+          <h3>Lloyd's finds former CEO breached compliance rules</h3>
+          <div class="meta"><span class="src">Lloyds.com</span> Â· Jul 22 Â· still relevant</div>
+          <div class="note">Council found an undisclosed relationship created a perceived conflict of interest. <b>Why it matters:</b> governance news at the market behind many specialty placements.</div>
+        </a>
+        <a class="story" data-tags="market" target="_blank" rel="noopener" href="https://www.lloyds.com/news-and-insights">
+          <h3>Lloyd's full-year 2025 results: Â£10.6bn profit before tax</h3>
+          <div class="meta"><span class="src">Lloyds.com</span> Â· FY 2025 Â· older but critical</div>
+          <div class="note">The market produced strong results with Â£10.6bn profit before tax. <b>Why it matters:</b> strong results typically support capacity and competitive pricing â€” context for renewals.</div>
+        </a>
+      </section>
+    </main>
+
+    <aside class="rail">
+      <section class="panel">
+        <div class="phead"><h2>Coverage by desk</h2></div>
+        <div class="bars">
+          <div class="bar-row"><span class="t">Top stories</span><span class="bar"><i style="width:100%"></i></span><span class="v">7</span></div>
+          <div class="bar-row"><span class="t">Verdicts &amp; funding</span><span class="bar"><i style="width:86%"></i></span><span class="v">6</span></div>
+          <div class="bar-row"><span class="t">Manufacturing</span><span class="bar"><i style="width:100%"></i></span><span class="v">7</span></div>
+          <div class="bar-row"><span class="t">Parametric</span><span class="bar"><i style="width:29%"></i></span><span class="v">2</span></div>
+          <div class="bar-row"><span class="t">London / global</span><span class="bar"><i style="width:43%"></i></span><span class="v">3</span></div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="phead"><h2>Hot topics â€” tap to spotlight</h2></div>
+        <div class="topics" id="topics">
+          <button class="topic" data-t="verdicts" aria-pressed="false">Nuclear verdicts<span class="c">2</span></button>
+          <button class="topic" data-t="litfunding" aria-pressed="false">Litigation funding<span class="c">4</span></button>
+          <button class="topic" data-t="parametric" aria-pressed="false">Parametric<span class="c">2</span></button>
+          <button class="topic" data-t="cyber" aria-pressed="false">Cyber<span class="c">4</span></button>
+          <button class="topic" data-t="cat" aria-pressed="false">Property &amp; cat<span class="c">4</span></button>
+          <button class="topic" data-t="manufacturing" aria-pressed="false">Manufacturing<span class="c">6</span></button>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="phead"><h2>Paywall &amp; access watch</h2><span class="chip" style="margin-left:auto">flagged, not skipped</span></div>
+        <div class="pw">
+          <a target="_blank" rel="noopener" href="https://www.businessinsurance.com">Business Insurance
+            <div class="m">Returned HTTP 403 to our reader today (bot-block or subscription gate). On the team's source list for executive &amp; emerging-risk coverage â€” subscription decision pending</div></a>
+          <a target="_blank" rel="noopener" href="https://www.theinsurer.com">The Insurer
+            <div class="m">Returned HTTP 401 (sign-in required). On the team's source list for reinsurance performance &amp; executive moves â€” subscription decision pending</div></a>
+          <a target="_blank" rel="noopener" href="https://www.law.com/newyorklawjournal/2026/05/22/defusing-americas-nuclear-verdicts-crisis/">Law.com â€” "Defusing America's Nuclear Verdicts Crisis"
+            <div class="m">Subscription required Â· say the word to price it</div></a>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="phead"><h2>Source roster â€” today's check</h2></div>
+        <div class="srcs">
+          âœ“ Risk &amp; Insurance Â· âœ“ Risk Management (RIMS) Â· âœ“ Insurance Business America Â· âœ“ Insurance Journal Â· âœ“ Beinsure Â· âœ“ CIR Â· âœ“ Artemis Â· âœ“ Lloyd's News<br>
+          âœ“ Modern Insurance (Issue 78 â€” nothing linkable retrieved today)<br>
+          â€” Enterprise Risk (IRM quarterly â€” no usable new item retrieved)<br>
+          ðŸ”’ Business Insurance (blocked) Â· ðŸ”’ The Insurer (subscriber wall)<br>
+          <b>Sweeps:</b> nuclear verdicts Â· litigation funding Â· parametric Â· manufacturing risk
+        </div>
+      </section>
+
+      <p class="foot">Built for executive decision-making â€” carries straight into a CFO briefing. Auto-generated each morning by 9:00 AM CT; reply with tune-ups â€” sources, keywords, story count, timing.</p>
+    </aside>
+  </div>
+</div>
+
+<script>
+(function(){
+  var active=null, stories=[].slice.call(document.querySelectorAll('.story'));
+  document.getElementById('topics').addEventListener('click',function(e){
+    var b=e.target.closest('.topic'); if(!b)return;
+    active = (active===b.dataset.t)? null : b.dataset.t;
+    [].slice.call(document.querySelectorAll('.topic')).forEach(function(x){
+      x.setAttribute('aria-pressed', String(x.dataset.t===active));
+    });
+    stories.forEach(function(s){
+      var hit = !active || (' '+s.dataset.tags+' ').indexOf(' '+active+' ')>=0;
+      s.classList.toggle('dim', !hit);
+    });
+  });
+})();
+</script>
+</html>
