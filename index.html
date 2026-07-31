@@ -59,6 +59,12 @@ a{color:inherit}
   font-weight:700;margin-top:4px}
 .kpi .ctx{font-size:12px;color:var(--muted);margin-top:2px}
 .kpi.hot .val{color:var(--accent-ink)}
+.cfo{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--accent);
+  border-radius:6px;padding:14px 18px;margin:16px 0 2px}
+.cfo-h{font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--accent-ink);margin-bottom:8px}
+.cfo ol{margin:0;padding-left:20px;font-size:14px}
+.cfo li{margin:5px 0}
+.cfo b{font-variant-numeric:tabular-nums}
 .cols{display:grid;grid-template-columns:1fr 300px;gap:16px;align-items:start}
 @media (max-width:900px){.cols{grid-template-columns:1fr}}
 .panel{background:var(--surface);border:1px solid var(--line);border-radius:6px;margin-bottom:16px;overflow:hidden}
@@ -117,7 +123,16 @@ a{color:inherit}
   <div class="topbar">
     <span class="mast">RISK<b>DESK</b> â€” Daily Intelligence</span>
     <span class="stamp">FRI 2026-07-31 Â· 08:45 CT Â· TODAY FIRST + LOOKBACK Â· 12-SOURCE ROSTER</span>
-    <span class="sample">Format sample</span>
+    <span class="sample">Edition 001</span>
+  </div>
+
+  <div class="cfo">
+    <div class="cfo-h">CFO Brief â€” three takeaways, written to be read aloud</div>
+    <ol>
+      <li><b>Casualty severity:</b> a $604M nuclear verdict hit C.H. Robinson this week; 2025 logged 149 such verdicts ($25.1B). Worth re-testing our umbrella limits against that curve.</li>
+      <li><b>Buyer's market:</b> commercial property rates fell 12% in Q2 (all lines âˆ’6%), and analysts doubt even a $100B catastrophe would harden the market â€” a favorable renewal window.</li>
+      <li><b>Cyber posture:</b> manufacturing was the most-attacked industry for a 5th straight year (27.7% of 2025 incidents) â€” the external case for our cyber tower.</li>
+    </ol>
   </div>
 
   <div class="kpis">

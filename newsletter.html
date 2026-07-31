@@ -48,8 +48,11 @@ h1{margin:0;font:700 34px/1.12 Georgia,serif;text-wrap:balance}
   color:var(--warn-ink);background:var(--warn-bg);border:1px solid var(--warn-line);padding:4px 9px;border-radius:3px}
 .rule{height:1px;background:var(--ink);margin:18px 0 0}
 .rule.thin{background:var(--line);margin:10px 0 0}
-.note{font-size:16.5px;color:var(--muted);font-style:italic;margin:20px 0 4px;max-width:62ch}
-.note b{color:var(--ink);font-style:normal}
+.cfo{border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:6px;
+  padding:16px 20px;margin:22px 0 4px}
+.cfo ol{margin:10px 0 0;padding-left:20px;font-size:15.5px}
+.cfo li{margin:7px 0}
+.cfo b{font-variant-numeric:tabular-nums}
 section{margin-top:34px}
 .sect{display:flex;align-items:baseline;gap:12px}
 .sect .eyebrow{color:var(--ink);letter-spacing:2px}
@@ -88,11 +91,18 @@ footer b{color:var(--ink)}
     <span class="eyebrow">Daily Â· Risk Management &amp; Insurance Â· Manufacturing Lens</span>
     <div class="row">
       <h1>The Morning Risk Briefing</h1>
-      <span class="sampletag">Format sample</span>
+      <span class="sampletag">Edition 001</span>
     </div>
     <div class="row"><span class="dateline">No. 001 â€” FRIDAY, JULY 31, 2026 â€” 25 ITEMS â€” TODAY FIRST + LOOKBACK â€” 12-SOURCE ROSTER</span></div>
     <div class="rule"></div>
-    <p class="note"><b>The morning in one paragraph:</b> A Dallas jury delivered a $604M nuclear verdict against C.H. Robinson â€” the day's defining number for anyone with fleet exposure. The market kept softening: global rates fell 6% in Q2 with commercial property down 12%, and analysts argue even a $100B catastrophe wouldn't harden it. Manufacturing holds its least-wanted title a fifth straight year â€” the most cyberattacked industry â€” while a 1.2M-vehicle Tesla probe is today's reminder of what product liability looks like at scale. Today's stories lead; a few older items stay in because they still matter, each dated.</p>
+    <div class="cfo">
+      <span class="eyebrow">CFO Brief â€” three takeaways, written to be read aloud</span>
+      <ol>
+        <li><b>Casualty severity:</b> a $604M nuclear verdict hit C.H. Robinson this week; 2025 logged 149 such verdicts ($25.1B). Worth re-testing our umbrella limits against that curve.</li>
+        <li><b>Buyer's market:</b> commercial property rates fell 12% in Q2 (all lines âˆ’6%), and analysts doubt even a $100B catastrophe would harden the market â€” a favorable renewal window.</li>
+        <li><b>Cyber posture:</b> manufacturing was the most-attacked industry for a 5th straight year (27.7% of 2025 incidents) â€” the external case for our cyber tower.</li>
+      </ol>
+    </div>
   </header>
 
   <section>
