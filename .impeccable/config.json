@@ -1,0 +1,28 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "side-tab",
+        "value": "*",
+        "files": [
+          "C:\\Users\\shawn\\Code\\risk-intel\\index.html",
+          "C:\\Users\\shawn\\Code\\risk-intel\\newsletter.html"
+        ],
+        "createdAt": "2026-08-17T14:20:13.320Z",
+        "reason": "Risk-intel daily brief: scheduled-task spec (daily-risk-insurance-brief SKILL.md) requires preserving the established page design, CSS and switcher links exactly across editions; the CFO-box left accent rule dates from Edition 001 and is mirrored in the email template"
+      },
+      {
+        "rule": "flat-type-hierarchy",
+        "value": "*",
+        "files": [
+          "C:\\Users\\shawn\\Code\\risk-intel\\index.html",
+          "C:\\Users\\shawn\\Code\\risk-intel\\newsletter.html"
+        ],
+        "createdAt": "2026-08-17T14:20:13.775Z",
+        "reason": "Risk-intel daily brief: scheduled-task spec (daily-risk-insurance-brief SKILL.md) requires preserving the established page design, CSS and switcher links exactly across editions; the dense type scale is deliberate for a scannable daily memo and dates from Edition 001"
+      }
+    ]
+  }
+}
